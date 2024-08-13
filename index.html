@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Picture Maker</title>
+    <title>Groypify Your Image</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="banner">GROYPIFY YOUR PFP</div>
     <h1>Groypify your image</h1>
     <div id="canvas-container"></div>
-    <div id="controls">
-        <input type="file" id="upload" accept="image/*">
-        <button id="done">Done</button>
-        <button id="download" disabled>Download</button>
-    </div>
+    <input type="file" id="upload" accept="image/*">
+    <button id="done" disabled>Done</button>
+    <button id="download" disabled>Download</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/konva@8.3.3/konva.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/konva@latest/konva.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
