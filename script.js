@@ -3,7 +3,7 @@ const doneButton = document.getElementById('done');
 const downloadButton = document.getElementById('download');
 const stage = new Konva.Stage({
     container: 'canvas-container',
-    width: 500,  // Matches the canvas container size
+    width: 500,
     height: 500
 });
 
@@ -12,27 +12,6 @@ stage.add(layer);
 
 let userImage = null;
 let overlayImage = null;
-let transformer = new Konva.Transformer();
-
-// Function to create overlay image
-function createOverlay() {
-    const imageObj = new Image();
-    imageObj.onload = function() {
-        overlayImage = new Konva.Image({
-            image: imageObj,
-            x: 50,
-            y: 50,
-            width: 100,
-            height: 100,
-            draggable: true
-        });
-        layer.add(overlayImage);
-        transformer.nodes([overlayImage]);
-        layer.add(transformer);
-        layer.draw();
-    };
-    imageObj.src = 'sticker.webp';  // Load your sticker image
-}
 
 upload.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -40,10 +19,7 @@ upload.addEventListener('change', function(e) {
     reader.onload = function(event) {
         const img = new Image();
         img.onload = function() {
-            // Clear previous image
-            layer.destroyChildren();
-
-            // Set user image
+            layer.destroyChildren(); 
             userImage = new Konva.Image({
                 x: 0,
                 y: 0,
@@ -53,32 +29,52 @@ upload.addEventListener('change', function(e) {
                 draggable: false
             });
             layer.add(userImage);
-            createOverlay();  // Add sticker upon image load
+            createOverlay(); 
         };
         img.src = event.target.result;
     };
     reader.readAsDataURL(file);
 });
 
+function createOverlay() {
+    if (!overlayImage) {
+        const stickerImg = new Image();
+        stickerImg.onload = function() {
+            overlayImage = new Konva.Image({
+                x: 150,
+                y: 150,
+                image: stickerImg,
+                width: 100,
+                height: 100,
+                draggable: true
+            });
+            layer.add(overlayImage);
+            layer.draw();
+            const tr = new Konva.Transformer();
+            layer.add(tr);
+            tr.attachTo(overlayImage);
+        };
+        stickerImg.src = 'sticker.webp';
+    }
+}
+
 doneButton.addEventListener('click', function() {
-    // Disable editing and remove transformer
     if (overlayImage) {
         overlayImage.draggable(false);
-        transformer.detach();
+        layer.find('Transformer').destroy();
         layer.draw();
         downloadButton.disabled = false;
     }
 });
 
 downloadButton.addEventListener('click', function() {
-    // Download the composite image
     const dataURL = stage.toDataURL({
         mimeType: 'image/jpeg',
-        quality: 1  // Max quality
+        quality: 1
     });
     const link = document.createElement('a');
     link.href = dataURL;
-    link.download = 'groypified-img.jpeg';  // Set the desired file name
+    link.download = 'groypified-img.jpeg';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
