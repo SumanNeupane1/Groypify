@@ -3,14 +3,30 @@ const doneButton = document.getElementById('done');
 const downloadButton = document.getElementById('download');
 const stage = new Konva.Stage({
     container: 'canvas-container',
-    width: 500,  // Match the CSS settings
-    height: 500  // Match the CSS settings
+    width: 500,
+    height: 500
 });
 
 const layer = new Konva.Layer();
 stage.add(layer);
 
 let userImage = null;
+let overlayImage = new Konva.Image({
+    draggable: true
+});
+
+// Preload the sticker image
+const sticker = new Image();
+sticker.onload = function() {
+    overlayImage.image(sticker);
+    overlayImage.width(100);  // Set initial size of the sticker
+    overlayImage.height(100);
+    overlayImage.x(200);  // Initial position of the sticker
+    overlayImage.y(200);
+};
+sticker.src = './sticker.webp';
+
+layer.add(overlayImage);
 
 upload.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -30,7 +46,7 @@ upload.addEventListener('change', function(e) {
                 image: img,
                 width: stage.width(),
                 height: stage.height(),
-                draggable: true
+                draggable: false  // Make it non-draggable
             });
             
             layer.add(userImage);
@@ -45,15 +61,8 @@ upload.addEventListener('change', function(e) {
 });
 
 doneButton.addEventListener('click', function() {
-    // Disable further interactions
-    const shapes = layer.find('Image');
-    shapes.forEach(function(shape) {
-        shape.draggable(false);
-    });
-    const transformers = layer.find('Transformer');
-    transformers.each(function(node) {
-        node.destroy();
-    });
+    // Disable interaction with the sticker
+    overlayImage.draggable(false);
     layer.draw();
     downloadButton.disabled = false;
 });
