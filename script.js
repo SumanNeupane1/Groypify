@@ -3,7 +3,7 @@ const doneButton = document.getElementById('done');
 const downloadButton = document.getElementById('download');
 const stage = new Konva.Stage({
     container: 'canvas-container',
-    width: 500,
+    width: 500,  // Match the CSS settings for canvas-container
     height: 500
 });
 
@@ -11,22 +11,7 @@ const layer = new Konva.Layer();
 stage.add(layer);
 
 let userImage = null;
-let overlayImage = new Konva.Image({
-    draggable: true
-});
-
-// Preload the sticker image
-const sticker = new Image();
-sticker.onload = function() {
-    overlayImage.image(sticker);
-    overlayImage.width(100);  // Set initial size of the sticker
-    overlayImage.height(100);
-    overlayImage.x(200);  // Initial position of the sticker
-    overlayImage.y(200);
-};
-sticker.src = './sticker.webp';
-
-layer.add(overlayImage);
+let overlayImage = null;  // Initialize without creating it
 
 upload.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -51,6 +36,31 @@ upload.addEventListener('change', function(e) {
             
             layer.add(userImage);
             layer.draw();
+
+            // Load sticker when image is loaded
+            if (!overlayImage) {
+                overlayImage = new Konva.Image({
+                    x: 150,  // Initial position of the sticker
+                    y: 150,
+                    width: 100,  // Initial size of the sticker
+                    height: 100,
+                    draggable: true
+                });
+
+                const sticker = new Image();
+                sticker.onload = function() {
+                    overlayImage.image(sticker);
+                    layer.add(overlayImage);
+                    layer.draw();
+
+                    // Add ability to resize and rotate the sticker
+                    const tr = new Konva.Transformer();
+                    layer.add(tr);
+                    tr.attachTo(overlayImage);
+                    layer.draw();
+                };
+                sticker.src = './sticker.webp'; // Ensure path is correct
+            }
         };
         img.src = event.target.result;
     };
@@ -62,9 +72,15 @@ upload.addEventListener('change', function(e) {
 
 doneButton.addEventListener('click', function() {
     // Disable interaction with the sticker
-    overlayImage.draggable(false);
-    layer.draw();
-    downloadButton.disabled = false;
+    if (overlayImage) {
+        overlayImage.draggable(false);
+        const transformers = layer.find('Transformer');
+        transformers.each(function(node) {
+            node.destroy();
+        });
+        layer.draw();
+        downloadButton.disabled = false;
+    }
 });
 
 downloadButton.addEventListener('click', function() {
