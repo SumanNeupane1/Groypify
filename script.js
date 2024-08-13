@@ -3,8 +3,8 @@ const doneButton = document.getElementById('done');
 const downloadButton = document.getElementById('download');
 const stage = new Konva.Stage({
     container: 'canvas-container',
-    width: 500,
-    height: 500
+    width: 500, // Adjust as needed
+    height: 500, // Adjust as needed
 });
 
 const layer = new Konva.Layer();
@@ -15,7 +15,7 @@ let overlayImage = new Image();
 let userImage = null;
 let overlay = null;
 
-overlayImage.src = './sticker.webp';  // Adjust as needed
+overlayImage.src = './sticker.webp';  // Ensure this path is correct
 
 upload.addEventListener('change', (e) => {
     const reader = new FileReader();
@@ -55,23 +55,28 @@ upload.addEventListener('change', (e) => {
 
 doneButton.addEventListener('click', () => {
     if (overlay && userImage) {
+        // Disable further interactions
         overlay.draggable(false);
         userImage.draggable(false);
-        layer.find('Transformer').destroy();
+        layer.find('Transformer').destroy(); // Remove transformers
         layer.draw();
-        downloadButton.disabled = false;
+        downloadButton.disabled = false; // Enable the download button
     }
 });
 
 downloadButton.addEventListener('click', () => {
-    const dataURL = stage.toDataURL({
-        mimeType: 'image/jpeg',
-        quality: 0.9
-    });
-    const link = document.createElement('a');
-    link.setAttribute('href', dataURL);
-    link.setAttribute('download', 'edited-image.jpeg');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+        const dataURL = stage.toDataURL({
+            mimeType: 'image/jpeg',
+            quality: 0.9
+        });
+        const link = document.createElement('a');
+        link.setAttribute('href', dataURL);
+        link.setAttribute('download', 'edited-image.jpeg');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (error) {
+        console.error('Download failed: ', error);
+    }
 });
