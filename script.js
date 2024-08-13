@@ -3,7 +3,7 @@ const doneButton = document.getElementById('done');
 const downloadButton = document.getElementById('download');
 const stage = new Konva.Stage({
     container: 'canvas-container',
-    width: 500, // Match the CSS settings
+    width: 500,
     height: 500
 });
 
@@ -16,7 +16,6 @@ let overlayImage = null;
 upload.addEventListener('change', function(e) {
     const file = e.target.files[0];
     const reader = new FileReader();
-    
     reader.onload = function(event) {
         const img = new Image();
         img.onload = function() {
@@ -55,10 +54,7 @@ upload.addEventListener('change', function(e) {
         };
         img.src = event.target.result;
     };
-    
-    if (file) {
-        reader.readAsDataURL(file);
-    }
+    reader.readAsDataURL(file);
 });
 
 doneButton.addEventListener('click', function() {
@@ -69,18 +65,22 @@ doneButton.addEventListener('click', function() {
     });
     overlayImage.draggable(false); // Disable dragging of the sticker
     layer.draw();
-    downloadButton.disabled = false;
+    downloadButton.disabled = false; // Enable the download button
 });
 
 downloadButton.addEventListener('click', function() {
-    const dataURL = stage.toDataURL({
-        mimeType: 'image/jpeg', // Specify JPEG format
-        quality: 0.9 // Specify image quality
-    });
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'groypify-profile-pic.jpeg';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (!downloadButton.disabled) { // Check if the button is enabled
+        const dataURL = stage.toDataURL({
+            mimeType: 'image/jpeg', // Specify JPEG format
+            quality: 0.9 // Specify image quality
+        });
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = 'groypify-profile-pic.jpeg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        console.error('Download button was clicked but it is disabled.');
+    }
 });
