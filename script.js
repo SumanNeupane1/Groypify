@@ -1,9 +1,6 @@
-// Get references to DOM elements
 const upload = document.getElementById('upload');
 const doneButton = document.getElementById('done');
 const downloadButton = document.getElementById('download');
-
-// Set up the Konva stage and layer
 const stage = new Konva.Stage({
     container: 'canvas-container',
     width: 500, // Set an initial width
@@ -18,10 +15,9 @@ let overlayImage = new Image();
 let userImage = null;
 let overlay = null;
 
-// Path to your overlay image (sticker.webp)
-overlayImage.src = 'sticker.webp';
+// Updated relative path to your overlay image
+overlayImage.src = './sticker.webp';  // Ensure this matches exactly how it's stored in your repository
 
-// Event listener for image upload
 upload.addEventListener('change', (e) => {
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -59,7 +55,6 @@ upload.addEventListener('change', (e) => {
     reader.readAsDataURL(e.target.files[0]);
 });
 
-// Event listener for the "Done" button
 doneButton.addEventListener('click', () => {
     if (overlay && userImage) {
         overlay.draggable(false); // Disable dragging for overlay
@@ -74,7 +69,6 @@ doneButton.addEventListener('click', () => {
     }
 });
 
-// Event listener for the "Download" button
 downloadButton.addEventListener('click', () => {
     try {
         const dataURL = stage.toDataURL(); // Generate the data URL for the image
