@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Picture Maker</title>
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Create Your Custom Profile Picture</h1>
+    <label for="upload">Upload your image:</label>
+    <input type="file" id="upload" accept="image/*" title="Choose an image file to upload">
+    <div id="controls">
+        <button id="download">Download</button>
+    </div>
+    <div id="canvas-container"></div>
+
+    <!-- Include Konva.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/konva@8.3.3/konva.min.js"></script>
+    <!-- Your Custom Script -->
+    <script src="script.js"></script>
+</body>
+</html>
