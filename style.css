@@ -1,7 +1,7 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #4CAF50;  /* Pleasant green background */
-    color: #FFFFFF;  /* White text color */
+    background-color: #00FF00;  /* Updated to a bright vivid green */
+    color: #FFFFFF;  /* White text color for contrast */
     text-align: center;
     padding: 20px;
 }
@@ -27,15 +27,16 @@ input[type="file"], button {
     padding: 10px 20px;
     margin: 10px;
     border-radius: 5px;
-    border: none;
-    background-color: #4CAF50;  /* Dark green for buttons */
+    border: 2px solid #1B5E20;  /* Dark green border for buttons */
+    background-color: #81C784;  /* Distinct green for buttons */
     color: white;
     cursor: pointer;
-    transition: background-color 0.3s; /* Smooth transition for background color */
+    transition: background-color 0.3s, border-color 0.3s; /* Smooth transitions for hover effects */
 }
 
 button:hover {
     background-color: #66BB6A;  /* Lighter green on hover */
+    border-color: #388E3C;  /* Darker green border on hover */
 }
 
 button:disabled {
