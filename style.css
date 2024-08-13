@@ -6,30 +6,30 @@ body {
     padding: 50px;
     background-image: repeating-linear-gradient(
         45deg,
-        rgba(255, 255, 255, 0.1) 0px,
-        rgba(255, 255, 255, 0.1) 1px,
-        transparent 1px,
-        transparent 100%
-    ), repeating-linear-gradient(
-        -45deg,
-        rgba(0, 0, 0, 0.1) 0px,
-        rgba(0, 0, 0, 0.1) 1px,
-        transparent 1px,
-        transparent 100%
-    ), repeating-linear-gradient(
-        45deg,
-        transparent 0px,
-        transparent 74px,
-        rgba(0, 0, 0, 0.5) 75px,
-        rgba(0, 0, 0, 0.5) 150px,
-        transparent 151px,
-        transparent 225px,
-        rgba(255, 255, 255, 0.5) 226px,
-        rgba(255, 255, 255, 0.5) 300px
+        transparent,
+        transparent 10px,
+        rgba(0, 0, 0, 0.05) 10px,
+        rgba(0, 0, 0, 0.05) 20px
     );
-    background-size: 300px 300px;
     font-style: italic;
-    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+}
+
+body::after {
+    content: 'Groypify Groypify Groypify ';
+    font-size: 5em;
+    color: rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    display: block;
+    transform: rotate(-45deg);
+    position: absolute;
+    left: -100%;
+    right: -100%;
+    top: -20%;
+    bottom: -20%;
+    z-index: -1;
+    text-shadow: 1px 1px 2px #fff;
 }
 
 #canvas-container {
