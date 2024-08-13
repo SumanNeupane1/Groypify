@@ -3,8 +3,8 @@ const doneButton = document.getElementById('done');
 const downloadButton = document.getElementById('download');
 const stage = new Konva.Stage({
     container: 'canvas-container',
-    width: 500, // Set an initial width
-    height: 500, // Set an initial height
+    width: 500, // Adjust as needed
+    height: 500, // Adjust as needed
 });
 
 const layer = new Konva.Layer();
@@ -15,8 +15,8 @@ let overlayImage = new Image();
 let userImage = null;
 let overlay = null;
 
-// Updated relative path to your overlay image
-overlayImage.src = './sticker.webp';  // Ensure this matches exactly how it's stored in your repository
+// Path to your overlay image
+overlayImage.src = './sticker.webp'; // Ensure this path is correct
 
 upload.addEventListener('change', (e) => {
     const reader = new FileReader();
@@ -34,7 +34,7 @@ upload.addEventListener('change', (e) => {
             stage.width(uploadedImage.width);
             stage.height(uploadedImage.height);
             layer.draw();
-            
+
             overlay = new Konva.Image({
                 x: 50,
                 y: 50,
@@ -45,7 +45,6 @@ upload.addEventListener('change', (e) => {
             layer.add(overlay);
             layer.draw();
 
-            // Add a transformer to allow resizing and rotation
             const tr = new Konva.Transformer();
             layer.add(tr);
             tr.attachTo(overlay);
@@ -57,13 +56,10 @@ upload.addEventListener('change', (e) => {
 
 doneButton.addEventListener('click', () => {
     if (overlay && userImage) {
-        overlay.draggable(false); // Disable dragging for overlay
-        userImage.draggable(false); // Disable dragging for user image
-        layer.getChildren().forEach(child => {
-            if (child instanceof Konva.Transformer) {
-                child.destroy(); // Remove the transformer handles
-            }
-        });
+        overlay.draggable(false);
+        userImage.draggable(false);
+        // Remove the transformer
+        layer.find('Transformer').destroy();
         layer.draw();
         downloadButton.disabled = false; // Enable the download button
     }
@@ -71,17 +67,17 @@ doneButton.addEventListener('click', () => {
 
 downloadButton.addEventListener('click', () => {
     try {
-        const dataURL = stage.toDataURL(); // Generate the data URL for the image
-        console.log(dataURL); // Log the data URL for debugging
-
+        const dataURL = stage.toDataURL({
+            mimeType: 'image/jpeg', // Specify JPEG format
+            quality: 0.9 // Specify image quality
+        });
         const link = document.createElement('a');
         link.setAttribute('href', dataURL);
-        link.setAttribute('download', 'profile-picture.png');
-
-        document.body.appendChild(link); // Append link to the body
-        link.click(); // Trigger the download
-        document.body.removeChild(link); // Remove the link from the DOM
+        link.setAttribute('download', 'edited-image.jpeg'); // Set the download file name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     } catch (error) {
-        console.error('Download failed: ', error); // Log any errors
+        console.error('Download failed: ', error);
     }
 });
