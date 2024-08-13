@@ -31,6 +31,11 @@ input[type="file"], button {
     background-color: #4CAF50;  /* Dark green for buttons */
     color: white;
     cursor: pointer;
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+button:hover {
+    background-color: #66BB6A;  /* Lighter green on hover */
 }
 
 button:disabled {
