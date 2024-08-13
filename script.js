@@ -11,7 +11,7 @@ const layer = new Konva.Layer();
 stage.add(layer);
 
 let userImage = null;
-let overlayImage = null;
+let overlayImage = null;  // Initialize without creating it
 
 upload.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -19,7 +19,9 @@ upload.addEventListener('change', function(e) {
     reader.onload = function(event) {
         const img = new Image();
         img.onload = function() {
-            layer.destroyChildren(); // Clear previous content
+            // Clear previous image and transformer if they exist
+            layer.find('Image').destroy();
+            layer.find('Transformer').destroy();
 
             userImage = new Konva.Image({
                 x: 0,
@@ -30,46 +32,57 @@ upload.addEventListener('change', function(e) {
                 draggable: false
             });
             layer.add(userImage);
-            
+
+            // Load and display the sticker if not already loaded
             if (!overlayImage) {
                 overlayImage = new Konva.Image({
-                    x: 100, // Initial position of the sticker
-                    y: 100,
-                    image: new Image(),
-                    width: 100,
+                    x: 150,  // Default position
+                    y: 150,
+                    width: 100,  // Default size
                     height: 100,
                     draggable: true
                 });
-                overlayImage.image().src = 'sticker.webp';
-                layer.add(overlayImage);
-            } else {
-                overlayImage.visible(true); // Make sticker visible if previously hidden
-            }
 
-            // Add a transformer to allow resizing and rotation
-            const tr = new Konva.Transformer();
-            layer.add(tr);
-            tr.attachTo(overlayImage);
+                const stickerImg = new Image();
+                stickerImg.onload = function() {
+                    overlayImage.image(stickerImg);
+                    layer.add(overlayImage);
+                    addTransformer();
+                };
+                stickerImg.src = './sticker.webp';
+            } else {
+                overlayImage.visible(true);
+                addTransformer();
+            }
             layer.draw();
         };
         img.src = event.target.result;
     };
-    reader.readAsDataURL(file);
+    if (file) {
+        reader.readAsDataURL(file);
+    }
 });
+
+function addTransformer() {
+    const tr = new Konva.Transformer();
+    layer.add(tr);
+    tr.attachTo(overlayImage);
+}
 
 doneButton.addEventListener('click', function() {
     const transformers = layer.find('Transformer');
     transformers.each(function(node) {
-        node.detach();
         node.destroy();
     });
-    overlayImage.draggable(false); // Disable dragging of the sticker
+    if (overlayImage) {
+        overlayImage.draggable(false);
+    }
+    downloadButton.disabled = false;
     layer.draw();
-    downloadButton.disabled = false; // Enable the download button
 });
 
 downloadButton.addEventListener('click', function() {
-    if (!downloadButton.disabled) { // Check if the button is enabled
+    if (!downloadButton.disabled) {
         const dataURL = stage.toDataURL({
             mimeType: 'image/jpeg', // Specify JPEG format
             quality: 0.9 // Specify image quality
@@ -80,7 +93,5 @@ downloadButton.addEventListener('click', function() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    } else {
-        console.error('Download button was clicked but it is disabled.');
     }
 });
