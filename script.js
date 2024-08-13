@@ -3,75 +3,70 @@ const doneButton = document.getElementById('done');
 const downloadButton = document.getElementById('download');
 const stage = new Konva.Stage({
     container: 'canvas-container',
-    width: 500,
-    height: 500
+    width: 500,  // Match the CSS settings
+    height: 500  // Match the CSS settings
 });
 
 const layer = new Konva.Layer();
 stage.add(layer);
 
-let uploadedImage = new Image();
-let overlayImage = new Image();
 let userImage = null;
-let overlay = null;
 
-overlayImage.src = './sticker.webp';  // Adjust as needed
-
-upload.addEventListener('change', (e) => {
+upload.addEventListener('change', function(e) {
+    const file = e.target.files[0];
     const reader = new FileReader();
+    
     reader.onload = function(event) {
-        uploadedImage.src = event.target.result;
-        uploadedImage.onload = function() {
+        const img = new Image();
+        img.onload = function() {
+            // Remove previous image if exists
+            if (userImage) {
+                userImage.destroy();
+            }
+            
             userImage = new Konva.Image({
-                x: 20,
-                y: 20,
-                image: uploadedImage,
-                draggable: true,
+                x: 0,
+                y: 0,
+                image: img,
+                width: stage.width(),
+                height: stage.height(),
+                draggable: true
             });
-
+            
             layer.add(userImage);
-            stage.width(uploadedImage.width);
-            stage.height(uploadedImage.height);
-            layer.draw();
-
-            overlay = new Konva.Image({
-                x: 50,
-                y: 50,
-                image: overlayImage,
-                draggable: true,
-            });
-
-            layer.add(overlay);
-            layer draw();
-
-            const tr = new Konva.Transformer();
-            layer.add(tr);
-            tr.attachTo(overlay);
             layer.draw();
         };
+        img.src = event.target.result;
     };
-    reader.readAsDataURL(e.target.files[0]);
-});
-
-doneButton.addEventListener('click', () => {
-    if (overlay && userImage) {
-        overlay.draggable(false);
-        userImage draggable(false);
-        layer.find('Transformer').destroy();
-        layer draw();
-        downloadButton.disabled = false;
+    
+    if (file) {
+        reader.readAsDataURL(file);
     }
 });
 
-downloadButton.addEventListener('click', () => {
+doneButton.addEventListener('click', function() {
+    // Disable further interactions
+    const shapes = layer.find('Image');
+    shapes.forEach(function(shape) {
+        shape.draggable(false);
+    });
+    const transformers = layer.find('Transformer');
+    transformers.each(function(node) {
+        node.destroy();
+    });
+    layer.draw();
+    downloadButton.disabled = false;
+});
+
+downloadButton.addEventListener('click', function() {
     const dataURL = stage.toDataURL({
         mimeType: 'image/jpeg',
         quality: 0.9
     });
     const link = document.createElement('a');
-    link.setAttribute('href', dataURL);
-    link.setAttribute('download', 'edited-image.jpeg');
+    link.href = dataURL;
+    link.download = 'groypify-profile-pic.jpeg';
     document.body.appendChild(link);
-    link click();
+    link.click();
     document.body.removeChild(link);
 });
